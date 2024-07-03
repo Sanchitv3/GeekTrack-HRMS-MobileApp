@@ -12,16 +12,29 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sanchitv3.MobileApp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.sanchitv3.MobileApp"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "305f8773-5309-4c12-a836-e3fd34c8edd6"
+      }
+    },
+    "owner": "sanchitv3",
+    "scheme": "MobileApp",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
