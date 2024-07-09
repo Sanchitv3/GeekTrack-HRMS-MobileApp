@@ -19,9 +19,9 @@ WebBrowser.maybeCompleteAuthSession();
 const App = observer(() => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     iosClientId:
-      "1012261498431-6tvlt16np1lgh3uv86upe7ecb9dr14eb.apps.googleusercontent.com",
+    process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS,
     androidClientId:
-      "1012261498431-qqk223d0e9vqdv9du8r5pdk60aqfi767.apps.googleusercontent.com",
+    process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID,
   });
 
   useEffect(() => {
