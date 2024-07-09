@@ -2,6 +2,7 @@
   "expo": {
     "name": "MobileApp",
     "slug": "MobileApp",
+    "scheme": "MobileApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -32,7 +33,7 @@
       }
     },
     "owner": "sanchitv3",
-    "scheme": "MobileApp",
+    
     "plugins": [
       "expo-router"
     ]
