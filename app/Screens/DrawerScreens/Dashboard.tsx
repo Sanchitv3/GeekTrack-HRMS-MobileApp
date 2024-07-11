@@ -3,7 +3,7 @@ import React from 'react'
 
 const Dashboard = () => {
   return (
-    <View>
+    <View style={styles.Main}>
       <Text>Dashboard</Text>
     </View>
   )
@@ -11,4 +11,8 @@ const Dashboard = () => {
 
 export default Dashboard
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  Main:{
+    marginTop:120
+  }
+})
