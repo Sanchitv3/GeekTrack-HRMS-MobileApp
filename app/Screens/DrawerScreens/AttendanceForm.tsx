@@ -37,22 +37,22 @@ const AttendanceForm: React.FC = () => {
 
       fetchEmployeeID();
 
-      if (employeeID) {
-        const attendanceQuery = query(
-          collection(db, "Attendance"),
-          where("employeeID", "==", employeeID)
-        );
+      // if (employeeID) {
+      //   const attendanceQuery = query(
+      //     collection(db, "Attendance"),
+      //     where("employeeID", "==", employeeID)
+      //   );
 
-        const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
-          const attendanceData = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Attendance[];
-          setAttendanceRecords(attendanceData);
-        });
+      //   const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
+      //     const attendanceData = snapshot.docs.map(doc => ({
+      //       id: doc.id,
+      //       ...doc.data(),
+      //     })) as Attendance[];
+      //     setAttendanceRecords(attendanceData);
+      //   });
 
-        return () => unsubscribe();
-      }
+      //   return () => unsubscribe();
+      // }
     }
   }, [employeeID]);
 
@@ -97,7 +97,7 @@ const AttendanceForm: React.FC = () => {
         <Text style={styles.btnTxt}>Submit Attendance</Text>
       </Pressable>
       
-      <ScrollView style={styles.attendanceRecords}>
+      {/* <ScrollView style={styles.attendanceRecords}>
         <Text style={styles.title}>Attendance Records</Text>
         {attendanceRecords.map(record => (
           <View key={record.id} style={styles.attendanceItem}>
@@ -105,7 +105,7 @@ const AttendanceForm: React.FC = () => {
             <Text>Status: {record.status}</Text>
           </View>
         ))}
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 };
@@ -113,9 +113,10 @@ const AttendanceForm: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     padding: 16,
-    marginTop:120
+    marginTop:120,
+    gap:20
   },
   formInputs: {
     marginBottom: 16,
@@ -131,15 +132,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: "gray",
   },
-  attendanceRecords: {
-    marginTop: 32,
-  },
-  attendanceItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 8,
-  },
+  // attendanceRecords: {
+  //   marginTop: 32,
+  // },
+  // attendanceItem: {
+  //   padding: 16,
+  //   borderBottomWidth: 1,
+  //   borderBottomColor: "#ccc",
+  //   marginBottom: 8,
+  // },
   title: {
     fontSize: 18,
     fontWeight: "bold",
@@ -154,14 +155,16 @@ const styles = StyleSheet.create({
     height:120
   },
   btn:{
-    backgroundColor:"blue",
-    padding:16,
-    borderRadius:14
+    marginTop:24,
+    backgroundColor:"#3B82F6",
+    padding:20,
+    borderRadius:24,
   },
   btnTxt:{
     color:"white",
     fontWeight:"bold",
-    fontSize:16
+    fontSize:16,
+    textAlign:"center"
   }
 });
 
