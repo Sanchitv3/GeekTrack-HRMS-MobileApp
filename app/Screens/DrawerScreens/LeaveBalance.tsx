@@ -62,6 +62,19 @@ const LeaveBalance: React.FC = () => {
     fetchLeaveData();
   }, []);
 
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "Approved":
+        return styles.approvedStatus;
+      case "Rejected":
+        return styles.rejectedStatus;
+      case "Pending":
+        return styles.pendingStatus;
+      default:
+        return styles.status;
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.counter}>
