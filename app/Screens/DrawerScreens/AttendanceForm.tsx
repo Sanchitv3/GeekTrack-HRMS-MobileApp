@@ -80,7 +80,7 @@ const AttendanceForm: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Date</Text>
-        <DatePicker date={date} onDateChange={setDate} mode="date" style={styles.datePicker}/>
+        <DatePicker date={date} onDateChange={setDate} mode="date" style={styles.datePicker} minimumDate={new Date()} maximumDate={new Date()}/>
       </View>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Status</Text>
