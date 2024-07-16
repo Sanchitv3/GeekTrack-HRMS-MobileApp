@@ -17,7 +17,8 @@ const LeaveBalance: React.FC = () => {
   const [leaveBalance, setLeaveBalance] = useState<number>(0);
   const [leaveHistory, setLeaveHistory] = useState<LeaveRequest[]>([]);
   const [employeeID, setEmployeeID] = useState<string>("");
-  const leavesCount=24; // Assuming 24 leaves per year
+  const leavesCount = 24; // Assuming 24 leaves per year
+
   useEffect(() => {
     const fetchLeaveData = async () => {
       const auth = getAuth();
@@ -48,7 +49,7 @@ const LeaveBalance: React.FC = () => {
               const approvedLeaves = leaveHistoryData.filter(
                 (leave) => leave.status === "Approved"
               ).length;
-              setLeaveBalance(leavesCount - approvedLeaves); 
+              setLeaveBalance(leavesCount - approvedLeaves);
             });
 
             return () => unsubscribe();
@@ -74,14 +75,14 @@ const LeaveBalance: React.FC = () => {
         return styles.status;
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.counter}>
-      <Text style={styles.counterText}>Total Leaves: {leavesCount}</Text>
+        <Text style={styles.counterText}>Total Leaves: {leavesCount}</Text>
         <Text style={styles.counterText}>Leaves Remaining: {leaveBalance}</Text>
       </View>
-      <Text style={styles.title}>Leave History: </Text>
+      <Text style={styles.title}>Leave History:</Text>
       {leaveHistory.length === 0 ? (
         <Text>No Leave History Found</Text>
       ) : (
@@ -90,7 +91,7 @@ const LeaveBalance: React.FC = () => {
             <Text>Start Date: {new Date(leave.startDate).toLocaleDateString()}</Text>
             <Text>End Date: {new Date(leave.endDate).toLocaleDateString()}</Text>
             <Text>Reason: {leave.reason}</Text>
-            <Text>Status: {leave.status}</Text>
+            <Text style={getStatusStyle(leave.status)}>Status: {leave.status}</Text>
           </View>
         ))
       )}
@@ -126,6 +127,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 20,
     textAlign: "center",
+  },
+  approvedStatus: {
+    color: "green",
+    fontWeight: "bold",
+  },
+  rejectedStatus: {
+    color: "red",
+    fontWeight: "bold",
+  },
+  pendingStatus: {
+    color: "orange",
+    fontWeight: "bold",
+  },
+  status: {
+    fontWeight: "bold",
   },
 });
 
