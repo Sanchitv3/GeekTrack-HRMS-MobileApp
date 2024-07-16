@@ -108,7 +108,7 @@ const TimesheetEntry: React.FC = () => {
           date={date}
           onDateChange={setDate}
           mode="date"
-          minimumDate={new Date()}
+          maximumDate={new Date()}
           style={styles.datePicker}
         />
       </View>
@@ -118,6 +118,7 @@ const TimesheetEntry: React.FC = () => {
           style={styles.input}
           placeholder="Description"
           value={description}
+          multiline
           onChangeText={setDescription}
         />
       </View>
