@@ -57,7 +57,7 @@ const AttendanceRecord = () => {
       <ScrollView style={styles.attendanceRecords}>
         {attendanceRecords.map(record => (
           <View key={record.id} style={styles.attendanceItem}>
-            <Text>Date: {new Date(record.date).toLocaleDateString()}</Text>
+            <Text>Date: {new Date(record.date).toLocaleString()}</Text>
             <Text>Status: {record.status}</Text>
           </View>
         ))}

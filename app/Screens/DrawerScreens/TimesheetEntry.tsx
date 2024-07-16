@@ -69,7 +69,7 @@ const TimesheetEntry: React.FC = () => {
       await addDoc(collection(db, "Timesheets"), {
         employeeID,
         projectID,
-        date: date.toISOString(),
+        date: date.toLocaleDateString(),
         hoursWorked,
         description,
         status: "Pending",
