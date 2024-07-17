@@ -4,9 +4,11 @@ import CustomHeader from "../Components/CustomHeader";
 import { getHeaderTitle } from "@react-navigation/elements";
 import CustomDrawer from "../Components/CustomDrawer";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
+import { StatusBar } from "react-native";
 export default function Layout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar barStyle={'light-content'}/>
       <Drawer
         screenOptions={{
           headerShown: true,
