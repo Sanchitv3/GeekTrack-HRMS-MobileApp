@@ -100,6 +100,7 @@ const TimesheetList: React.FC = () => {
         <Text>No timesheets found.</Text>
       ) : (
         timesheets.map((item) => (
+            
           <Swipeable
             key={item.id}
             renderRightActions={() => renderRightActions(item.id)}
