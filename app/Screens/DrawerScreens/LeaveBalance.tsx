@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
@@ -46,9 +46,15 @@ const LeaveBalance: React.FC = () => {
               }));
               setLeaveHistory(leaveHistoryData);
 
-              const approvedLeaves = leaveHistoryData.filter(
-                (leave) => leave.status === "Approved"
-              ).length;
+              const approvedLeaves = leaveHistoryData
+                .filter((leave) => leave.status === "Approved")
+                .reduce((total, leave) => {
+                  const startDate = new Date(leave.startDate);
+                  const endDate = new Date(leave.endDate);
+                  const days = (endDate.getDate() - startDate.getDate());
+                  return total + days;
+                }, 0);
+
               setLeaveBalance(leavesCount - approvedLeaves);
             });
 
@@ -83,18 +89,20 @@ const LeaveBalance: React.FC = () => {
         <Text style={styles.counterText}>Leaves Remaining: {leaveBalance}</Text>
       </View>
       <Text style={styles.title}>Leave History:</Text>
-      {leaveHistory.length === 0 ? (
-        <Text>No Leave History Found</Text>
-      ) : (
-        leaveHistory.map((leave) => (
-          <View key={leave.id} style={styles.leaveItem}>
-            <Text>Start Date: {new Date(leave.startDate).toLocaleDateString()}</Text>
-            <Text>End Date: {new Date(leave.endDate).toLocaleDateString()}</Text>
-            <Text>Reason: {leave.reason}</Text>
-            <Text style={getStatusStyle(leave.status)}>Status: {leave.status}</Text>
-          </View>
-        ))
-      )}
+      <ScrollView>
+        {leaveHistory.length === 0 ? (
+          <Text>No Leave History Found</Text>
+        ) : (
+          leaveHistory.map((leave) => (
+            <View key={leave.id} style={styles.leaveItem}>
+              <Text>Start Date: {new Date(leave.startDate).toLocaleDateString()}</Text>
+              <Text>End Date: {new Date(leave.endDate).toLocaleDateString()}</Text>
+              <Text>Reason: {leave.reason}</Text>
+              <Text style={getStatusStyle(leave.status)}>Status: {leave.status}</Text>
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 };

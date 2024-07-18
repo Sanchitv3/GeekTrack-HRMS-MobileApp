@@ -65,11 +65,21 @@ const LeaveRequestForm: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Start Date</Text>
-        <DatePicker date={startDate} onDateChange={setStartDate} mode="date" style={styles.datePicker} />
+        <DatePicker
+          date={startDate}
+          onDateChange={setStartDate}
+          mode="date"
+          style={styles.datePicker}
+        />
       </View>
       <View style={styles.formInputs}>
         <Text style={styles.label}>End Date</Text>
-        <DatePicker date={endDate} onDateChange={setEndDate} mode="date" style={styles.datePicker} />
+        <DatePicker
+          date={endDate}
+          onDateChange={setEndDate}
+          mode="date"
+          style={styles.datePicker}
+        />
       </View>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Reason</Text>
@@ -107,7 +117,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     height: 80,
-    overflow: "hidden"
+    overflow: "hidden",
   },
 });
 
