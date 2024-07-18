@@ -50,7 +50,7 @@ const AttendanceRecord = () => {
           ...(doc.data() as Attendance),
           date: (doc.data() as Attendance).date.split('T')[0], // Ensure the date is in YYYY-MM-DD format
         }));
-
+        attendanceData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         setAttendanceRecords(attendanceData);
         markAttendanceDates(attendanceData);
       });
@@ -63,7 +63,7 @@ const AttendanceRecord = () => {
     const dates = records.reduce((acc, record) => {
       acc[record.date] = {
         marked: true,
-        dotColor: record.status === "Present" ? "green" : "red"
+        dotColor: record.status === "WFO" || record.status === "WFH" ? "green" : "purple"
       };
       return acc;
     }, {} as { [key: string]: any });
@@ -90,14 +90,6 @@ const AttendanceRecord = () => {
         onDayPress={handleDayPress}
         style={styles.calendar}
       />
-      <ScrollView style={styles.attendanceRecords}>
-        {attendanceRecords.map(record => (
-          <View key={record.id} style={styles.attendanceItem}>
-            <Text>Date: {new Date(record.date).toLocaleString()}</Text>
-            <Text>Status: {record.status}</Text>
-          </View>
-        ))}
-      </ScrollView>
     </View>
   );
 };
