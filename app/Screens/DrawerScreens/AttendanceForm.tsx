@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, Pressable } from "react-native";
-import { collection, addDoc, onSnapshot, query, where, getDocs } from "firebase/firestore";
+import { View, Text, Alert, Pressable, StyleSheet } from "react-native";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
 import DatePicker from "react-native-date-picker";
@@ -14,8 +14,7 @@ interface Attendance {
 
 const AttendanceForm: React.FC = () => {
   const [date, setDate] = useState<Date>(new Date());
-  const [status, setStatus] = useState<string>("Present");
-  const [attendanceRecords, setAttendanceRecords] = useState<Attendance[]>([]);
+  const [status, setStatus] = useState<string>("WFH");
   const [employeeID, setEmployeeID] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,36 +35,33 @@ const AttendanceForm: React.FC = () => {
       };
 
       fetchEmployeeID();
-
-      // if (employeeID) {
-      //   const attendanceQuery = query(
-      //     collection(db, "Attendance"),
-      //     where("employeeID", "==", employeeID)
-      //   );
-
-      //   const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
-      //     const attendanceData = snapshot.docs.map(doc => ({
-      //       id: doc.id,
-      //       ...doc.data(),
-      //     })) as Attendance[];
-      //     setAttendanceRecords(attendanceData);
-      //   });
-
-      //   return () => unsubscribe();
-      // }
     }
-  }, [employeeID]);
+  }, []);
 
   const handleSubmit = async () => {
-    const validDate= new Date().toLocaleDateString();
-    if (!date || !status || !employeeID || date.toLocaleDateString()!==validDate) {
+    const validDate = new Date().toLocaleDateString();
+    if (!date || !status || !employeeID || date.toLocaleDateString() !== validDate) {
       Alert.alert("Error", "Please fill all the fields correctly.");
       return;
     }
 
     try {
+      // Check if an attendance record already exists for the current date
+      const attendanceQuery = query(
+        collection(db, "Attendance"),
+        where("employeeID", "==", employeeID),
+        where("date", "==", date.toISOString().split('T')[0])
+      );
+      const querySnapshot = await getDocs(attendanceQuery);
+
+      if (!querySnapshot.empty) {
+        Alert.alert("Error", "You have already marked attendance for today.");
+        return;
+      }
+
+      // Add new attendance record
       await addDoc(collection(db, "Attendance"), {
-        date: date.toISOString(),
+        date: date.toISOString().split('T')[0],
         status,
         employeeID: employeeID,
       });
@@ -80,32 +76,22 @@ const AttendanceForm: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Date</Text>
-        <DatePicker date={date} onDateChange={setDate} mode="date" style={styles.datePicker} minimumDate={new Date()} maximumDate={new Date()}/>
+        <DatePicker date={date} onDateChange={setDate} mode="date" style={styles.datePicker} minimumDate={new Date()} maximumDate={new Date()} />
       </View>
       <View style={styles.formInputs}>
         <Text style={styles.label}>Status</Text>
         <Picker
-        selectedValue={status}
-        onValueChange={(itemValue) => setStatus(itemValue)}
-        itemStyle={styles.pickerItems}
-      >
-        <Picker.Item label="Home" value="WFH" />
-        <Picker.Item label="Working from Office" value="WFO" />
-      </Picker>
+          selectedValue={status}
+          onValueChange={(itemValue) => setStatus(itemValue)}
+          itemStyle={styles.pickerItems}
+        >
+          <Picker.Item label="Home" value="WFH" />
+          <Picker.Item label="Working from Office" value="WFO" />
+        </Picker>
       </View>
       <Pressable onPress={handleSubmit} style={styles.btn}>
         <Text style={styles.btnTxt}>Submit Attendance</Text>
       </Pressable>
-      
-      {/* <ScrollView style={styles.attendanceRecords}>
-        <Text style={styles.title}>Attendance Records</Text>
-        {attendanceRecords.map(record => (
-          <View key={record.id} style={styles.attendanceItem}>
-            <Text>Date: {new Date(record.date).toLocaleDateString()}</Text>
-            <Text>Status: {record.status}</Text>
-          </View>
-        ))}
-      </ScrollView> */}
     </View>
   );
 };
@@ -115,56 +101,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     padding: 16,
-    marginTop:120,
-    gap:20
+    marginTop: 120,
+    gap: 20
   },
   formInputs: {
     marginBottom: 16,
-  },
-  input: {
-    height: 40,
-    paddingHorizontal: 8,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 4,
   },
   label: {
     marginBottom: 8,
     color: "gray",
   },
-  // attendanceRecords: {
-  //   marginTop: 32,
-  // },
-  // attendanceItem: {
-  //   padding: 16,
-  //   borderBottomWidth: 1,
-  //   borderBottomColor: "#ccc",
-  //   marginBottom: 8,
-  // },
-  title: {
-    fontSize: 18,
+  datePicker: {
+    height: 80,
+    overflow: "hidden"
+  },
+  pickerItems: {
+    overflow: "hidden",
+    height: 120
+  },
+  btn: {
+    marginTop: 24,
+    backgroundColor: "#3B82F6",
+    padding: 20,
+    borderRadius: 24,
+  },
+  btnTxt: {
+    color: "white",
     fontWeight: "bold",
-    marginBottom: 8,
-  },
-  datePicker:{
-    height:80,
-    overflow:"hidden"
-  },
-  pickerItems:{
-    overflow:"hidden",
-    height:120
-  },
-  btn:{
-    marginTop:24,
-    backgroundColor:"#3B82F6",
-    padding:20,
-    borderRadius:24,
-  },
-  btnTxt:{
-    color:"white",
-    fontWeight:"bold",
-    fontSize:16,
-    textAlign:"center"
+    fontSize: 16,
+    textAlign: "center"
   }
 });
 
