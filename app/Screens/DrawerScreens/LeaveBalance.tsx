@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { collection, getDocs, onSnapshot, query, where } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, query, where, doc, setDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
 import userStore from "../../stores/userStore";
@@ -10,7 +10,6 @@ interface LeaveRequest {
   startDate: string;
   endDate: string;
   reason: string;
-  // type: string;
   leaveType: "Sick" | "Paid" | "Unpaid";
   status: string;
 }
@@ -57,12 +56,14 @@ const LeaveBalance: React.FC = () => {
                 if (leave.status === "Approved") {
                   const startDate = new Date(leave.startDate);
                   const endDate = new Date(leave.endDate);
-                  const days = (endDate.getDate() - startDate.getDate())+1;
+                  const days = (endDate.getDate() - startDate.getDate()) + 1; // Add 1 to include the end date
                   leaveCounts[leave.leaveType] -= days;
                 }
               });
 
               setLeaveBalances(leaveCounts);
+              updateLeaveBalancesInFirestore(empDoc.id, leaveCounts);
+              console.log(leaveCounts)
             });
 
             return () => unsubscribe();
@@ -75,6 +76,15 @@ const LeaveBalance: React.FC = () => {
 
     fetchLeaveData();
   }, []);
+
+  const updateLeaveBalancesInFirestore = async (employeeID: string, leaveCounts: { [key: string]: number }) => {
+    try {
+      const leaveBalancesRef = doc(db, "LeaveBalances", employeeID);
+      await setDoc(leaveBalancesRef, leaveCounts, { merge: true });
+    } catch (error) {
+      console.error("Error updating leave balances in Firestore: ", error);
+    }
+  };
 
   const getStatusStyle = (status: string) => {
     switch (status) {

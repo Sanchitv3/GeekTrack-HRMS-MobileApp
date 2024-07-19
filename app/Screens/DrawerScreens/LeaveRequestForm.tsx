@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from "react-native";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
 import DatePicker from "react-native-date-picker";
@@ -12,13 +12,18 @@ const LeaveRequestForm: React.FC = () => {
   const [reason, setReason] = useState<string>("");
   const [employeeID, setEmployeeID] = useState<string>("");
   const [leaveType, setLeaveType] = useState<string>("Paid");
+  const [leaveBalances, setLeaveBalances] = useState<{ [key: string]: number }>({
+    Sick: 12,
+    Paid: 12,
+    Unpaid: 12,
+  });
 
   useEffect(() => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
     if (currentUser) {
-      const fetchEmployeeID = async () => {
+      const fetchEmployeeIDAndBalances = async () => {
         try {
           const employeesQuery = query(
             collection(db, "Employees"),
@@ -28,19 +33,32 @@ const LeaveRequestForm: React.FC = () => {
           if (!querySnapshot.empty) {
             const employeeDoc = querySnapshot.docs[0];
             setEmployeeID(employeeDoc.id);
+
+            // Fetch leave balances
+            const leaveBalancesDoc = await getDoc(doc(db, "LeaveBalances", employeeDoc.id));
+            if (leaveBalancesDoc.exists()) {
+              setLeaveBalances(leaveBalancesDoc.data() as { [key: string]: number });
+            }
           }
         } catch (error) {
-          console.error("Error fetching employee ID: ", error);
+          console.error("Error fetching employee ID or leave balances: ", error);
         }
       };
 
-      fetchEmployeeID();
+      fetchEmployeeIDAndBalances();
     }
   }, []);
 
   const handleSubmit = async () => {
     if (!startDate || !endDate || startDate > endDate) {
       Alert.alert("Error", "Please fill all the fields correctly.");
+      return;
+    }
+
+    const leaveDays = (endDate.getDate() - startDate.getDate()) + 1; // Add 1 to include the end date
+
+    if (leaveBalances[leaveType] < leaveDays) {
+      Alert.alert("Error", `Insufficient ${leaveType} leaves available.`);
       return;
     }
 
@@ -53,11 +71,13 @@ const LeaveRequestForm: React.FC = () => {
         leaveType,
         status: "Pending",
       });
+
       // Reset form
       setStartDate(new Date());
       setEndDate(new Date());
       setReason("");
       setLeaveType("Paid"); // Reset leave type to Paid
+
       Alert.alert("Success", "Leave request submitted successfully.");
     } catch (error) {
       console.error("Error submitting leave request: ", error);
