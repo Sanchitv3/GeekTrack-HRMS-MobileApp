@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Alert, Pressable } from "react-native";
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../../../firebaseConfig";
 import DatePicker from "react-native-date-picker";
+import { Picker } from "@react-native-picker/picker";
 
 const LeaveRequestForm: React.FC = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [reason, setReason] = useState<string>("");
   const [employeeID, setEmployeeID] = useState<string>("");
+  const [leaveType, setLeaveType] = useState<string>("Paid");
 
   useEffect(() => {
     const auth = getAuth();
@@ -37,7 +39,7 @@ const LeaveRequestForm: React.FC = () => {
   }, []);
 
   const handleSubmit = async () => {
-    if (!startDate || !endDate || !reason) {
+    if (!startDate || !endDate || startDate > endDate) {
       Alert.alert("Error", "Please fill all the fields correctly.");
       return;
     }
@@ -47,13 +49,15 @@ const LeaveRequestForm: React.FC = () => {
         employeeID,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
-        reason,
+        reason: leaveType === "Sick" ? "Sick" : reason, // Set reason based on leave type
+        leaveType,
         status: "Pending",
       });
       // Reset form
       setStartDate(new Date());
       setEndDate(new Date());
       setReason("");
+      setLeaveType("Paid"); // Reset leave type to Paid
       Alert.alert("Success", "Leave request submitted successfully.");
     } catch (error) {
       console.error("Error submitting leave request: ", error);
@@ -82,15 +86,31 @@ const LeaveRequestForm: React.FC = () => {
         />
       </View>
       <View style={styles.formInputs}>
-        <Text style={styles.label}>Reason</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Reason"
-          value={reason}
-          onChangeText={setReason}
-        />
+        <Text style={styles.label}>Leave Type</Text>
+        <Picker
+          selectedValue={leaveType}
+          onValueChange={(itemValue) => setLeaveType(itemValue)}
+          itemStyle={{height:80}}
+        >
+          <Picker.Item label="Sick" value="Sick" />
+          <Picker.Item label="Paid" value="Paid" />
+          <Picker.Item label="Unpaid" value="Unpaid" />
+        </Picker>
       </View>
-      <Button title="Submit Leave Request" onPress={handleSubmit} />
+      {leaveType !== "Sick" && (
+        <View style={styles.formInputs}>
+          <Text style={styles.label}>Reason</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Reason"
+            value={reason}
+            onChangeText={setReason}
+          />
+        </View>
+      )}
+      <Pressable onPress={handleSubmit} style={styles.btn}>
+        <Text style={styles.btnTxt}>Submit Leave Request</Text>
+      </Pressable>
     </View>
   );
 };
@@ -119,6 +139,18 @@ const styles = StyleSheet.create({
     height: 80,
     overflow: "hidden",
   },
+  btn: {
+    marginTop: 24,
+    backgroundColor: "#3B82F6",
+    padding: 20,
+    borderRadius: 24,
+  },
+  btnTxt: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center"
+  }
 });
 
 export default LeaveRequestForm;

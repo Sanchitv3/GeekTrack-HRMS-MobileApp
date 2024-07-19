@@ -10,14 +10,19 @@ interface LeaveRequest {
   startDate: string;
   endDate: string;
   reason: string;
+  // type: string;
+  leaveType: "Sick" | "Paid" | "Unpaid";
   status: string;
 }
 
 const LeaveBalance: React.FC = () => {
-  const [leaveBalance, setLeaveBalance] = useState<number>(0);
+  const [leaveBalances, setLeaveBalances] = useState({
+    Sick: 12,
+    Paid: 12,
+    Unpaid: 12,
+  });
   const [leaveHistory, setLeaveHistory] = useState<LeaveRequest[]>([]);
   const [employeeID, setEmployeeID] = useState<string>("");
-  const leavesCount = 24; // Assuming 24 leaves per year
 
   useEffect(() => {
     const fetchLeaveData = async () => {
@@ -46,16 +51,18 @@ const LeaveBalance: React.FC = () => {
               }));
               setLeaveHistory(leaveHistoryData);
 
-              const approvedLeaves = leaveHistoryData
-                .filter((leave) => leave.status === "Approved")
-                .reduce((total, leave) => {
+              const leaveCounts = { Sick: 12, Paid: 12, Unpaid: 12 };
+
+              leaveHistoryData.forEach((leave) => {
+                if (leave.status === "Approved") {
                   const startDate = new Date(leave.startDate);
                   const endDate = new Date(leave.endDate);
-                  const days = (endDate.getDate() - startDate.getDate());
-                  return total + days;
-                }, 0);
+                  const days = (endDate.getDate() - startDate.getDate())+1;
+                  leaveCounts[leave.leaveType] -= days;
+                }
+              });
 
-              setLeaveBalance(leavesCount - approvedLeaves);
+              setLeaveBalances(leaveCounts);
             });
 
             return () => unsubscribe();
@@ -85,8 +92,9 @@ const LeaveBalance: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.counter}>
-        <Text style={styles.counterText}>Total Leaves: {leavesCount}</Text>
-        <Text style={styles.counterText}>Leaves Remaining: {leaveBalance}</Text>
+        <Text style={styles.counterText}>Sick Leaves Remaining: {leaveBalances.Sick}</Text>
+        <Text style={styles.counterText}>Paid Leaves Remaining: {leaveBalances.Paid}</Text>
+        <Text style={styles.counterText}>Unpaid Leaves Remaining: {leaveBalances.Unpaid}</Text>
       </View>
       <Text style={styles.title}>Leave History:</Text>
       <ScrollView>
@@ -98,6 +106,7 @@ const LeaveBalance: React.FC = () => {
               <Text>Start Date: {new Date(leave.startDate).toLocaleDateString()}</Text>
               <Text>End Date: {new Date(leave.endDate).toLocaleDateString()}</Text>
               <Text>Reason: {leave.reason}</Text>
+              <Text>Type: {leave.leaveType}</Text>
               <Text style={getStatusStyle(leave.status)}>Status: {leave.status}</Text>
             </View>
           ))
