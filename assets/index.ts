@@ -13,3 +13,4 @@ export { default as MenuIconPng } from './MenuIcon.png';
 export { default as MenuIconSvg } from './MenuIcon.svg';
 export { default as SearchIcon } from './SearchIcon.png';
 export { default as Splash } from './splash.png';
+export { default as HrmsLogo } from './HrmsLogo.png';

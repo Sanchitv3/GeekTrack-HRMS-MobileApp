@@ -68,6 +68,25 @@ const AttendanceRecord = () => {
       return acc;
     }, {} as { [key: string]: any });
 
+    // Add off days for Saturdays and Sundays
+    const today = new Date();
+    const year = today.getFullYear();
+    for (let month = 0; month < 12; month++) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        if (date.getDay() === 0 || date.getDay() === 6) { // Sunday or Saturday
+          const dateString = date.toISOString().split('T')[0];
+          if (!dates[dateString]) {
+            dates[dateString] = {
+              marked: true,
+              dotColor: 'red',
+            };
+          }
+        }
+      }
+    }
+
     setMarkedDates(dates);
   };
 
@@ -77,6 +96,8 @@ const AttendanceRecord = () => {
 
     if (record) {
       Alert.alert("Attendance Details", `Date: ${record.date}\nStatus: ${record.status}`);
+    } else if (new Date(dateString).getDay() === 0 || new Date(dateString).getDay() === 6) {
+      Alert.alert("Off Day", "This is a scheduled off day.");
     } else {
       Alert.alert("No Record", "No attendance record for this date.");
     }

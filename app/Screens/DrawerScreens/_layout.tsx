@@ -77,6 +77,13 @@ export default function Layout() {
             title: "Timesheet Record",
           }}
         />
+        <Drawer.Screen
+          name="PayrollList"
+          options={{
+            drawerLabel: "Payslips",
+            title: "Payslips",
+          }}
+        />
       </Drawer>
     </GestureHandlerRootView>
   );
