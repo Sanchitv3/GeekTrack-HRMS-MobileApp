@@ -1,13 +1,41 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
 import auth from "../../../firebaseConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userStore from "../../stores/userStore";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { getFirestore, collection, query, where, getDocs, getDoc, doc } from "firebase/firestore";
+import { format } from 'date-fns';
+
+const db = getFirestore();
 
 export default function Settings() {
+  const [employeeInfo, setEmployeeInfo] = useState<any>(null);
+  const fetchEmployeeInfo = async () => {
+    try {
+      const userEmail = auth.currentUser?.email;
+      if (userEmail) {
+        const employeeQuery = query(
+          collection(db, "Employees"),
+          where("email", "==", userEmail)
+        );
+        const querySnapshot = await getDocs(employeeQuery);
+        if (!querySnapshot.empty) {
+          const employeeData = querySnapshot.docs[0].data();
+          setEmployeeInfo(employeeData);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching employee info: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeInfo();
+  }, []);
+
   const handleSignOut = async () => {
     try {
       await signOut(auth);
@@ -19,9 +47,10 @@ export default function Settings() {
       console.error("Error signing out: ", error);
     }
   };
-
+const formatedDate= employeeInfo?.dateOfJoining.toDate ? 
+format(employeeInfo?.dateOfJoining.toDate(), 'dd-MM-yyyy'): employeeInfo?.dateOfJoining;
   return (
-    <View style={styles.Main}>
+    <ScrollView style={styles.Main} >
       <View style={styles.Profile}>
         <Image
           source={{ uri: userStore.userPhoto }}
@@ -30,11 +59,39 @@ export default function Settings() {
         <View style={styles.ProfileInfo}>
           <Text style={styles.ProfileText}>
             <Text style={styles.ProfileLabels}>Name: </Text>
-            {userStore.userName}
+            {employeeInfo?.name}
           </Text>
           <Text style={styles.ProfileText}>
             <Text style={styles.ProfileLabels}>Email: </Text>
-            {userStore.userEmail}
+            {employeeInfo?.email}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>Phone: </Text>
+            {employeeInfo?.phone}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>Address Line: </Text>
+            {employeeInfo?.addressLine1}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>City: </Text>
+            {employeeInfo?.city}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>State: </Text>
+            {employeeInfo?.state}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>Country: </Text>
+            {employeeInfo?.country}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>ZipCode: </Text>
+            {employeeInfo?.zipcode}
+          </Text>
+          <Text style={styles.ProfileText}>
+            <Text style={styles.ProfileLabels}>Date Of Joining: </Text>
+            {formatedDate}
           </Text>
         </View>
       </View>
@@ -49,6 +106,7 @@ export default function Settings() {
             width: 200,
             alignItems: "center",
             borderRadius: 24,
+            marginHorizontal:"auto"
           },
         ]}
       >
@@ -56,7 +114,7 @@ export default function Settings() {
           Sign Out
         </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -64,13 +122,14 @@ const styles = StyleSheet.create({
   Main: {
     flex: 1,
     marginTop: 100,
-    alignItems: "center",
+    paddingTop:20
   },
   Profile: {
     flex: 0.5,
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
+    marginBottom:40
   },
   ProfilePic: {
     height: 200,
@@ -78,13 +137,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   ProfileText: {
-    fontSize: 20,
+    fontSize: 18,
   },
   ProfileLabels: {
     fontWeight: "bold",
   },
   ProfileInfo: {
-    backgroundColor: "rgba(0, 0, 0, 0.18)",
+    backgroundColor:"white",
     borderRadius: 24,
     padding: 20,
   },

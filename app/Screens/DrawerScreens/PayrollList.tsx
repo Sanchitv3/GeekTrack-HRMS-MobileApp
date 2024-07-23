@@ -70,9 +70,9 @@ const PayrollList: React.FC = () => {
   const generatePDF = async (payroll: Payroll, salary: EmployeeSalary) => {
     try {
       const uri = await captureRef(viewRef, {
-        format: 'png',
-        quality: 1,
-      });
+          format: 'png',
+          quality: 1,
+        });
 
       const response = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
       const imageBytes = arrayBufferToBase64.decode(response);

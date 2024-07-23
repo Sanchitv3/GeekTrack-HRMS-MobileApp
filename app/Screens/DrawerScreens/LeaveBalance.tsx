@@ -56,14 +56,13 @@ const LeaveBalance: React.FC = () => {
                 if (leave.status === "Approved") {
                   const startDate = new Date(leave.startDate);
                   const endDate = new Date(leave.endDate);
-                  const days = (endDate.getDate() - startDate.getDate()) + 1; // Add 1 to include the end date
+                  const days = (endDate.getDate() - startDate.getDate()) + 1;
                   leaveCounts[leave.leaveType] -= days;
                 }
               });
 
               setLeaveBalances(leaveCounts);
               updateLeaveBalancesInFirestore(empDoc.id, leaveCounts);
-              console.log(leaveCounts)
             });
 
             return () => unsubscribe();
@@ -107,7 +106,7 @@ const LeaveBalance: React.FC = () => {
         <Text style={styles.counterText}>Unpaid Leaves Remaining: {leaveBalances.Unpaid}</Text>
       </View>
       <Text style={styles.title}>Leave History:</Text>
-      <ScrollView>
+      <ScrollView style={styles.scrollViewStyle} showsVerticalScrollIndicator={false}>
         {leaveHistory.length === 0 ? (
           <Text>No Leave History Found</Text>
         ) : (
@@ -170,6 +169,9 @@ const styles = StyleSheet.create({
   status: {
     fontWeight: "bold",
   },
+  scrollViewStyle:{
+    paddingHorizontal:10,
+  }
 });
 
 export default LeaveBalance;
