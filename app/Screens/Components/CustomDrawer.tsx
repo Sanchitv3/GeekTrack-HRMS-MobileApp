@@ -32,7 +32,7 @@ const CustomDrawer = observer((props: DrawerContentComponentProps) => {
         </Pressable>
       </LinearGradient>
       <DrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
+        <DrawerItemList {...props}/>
       </DrawerContentScrollView>
     </View>
   );

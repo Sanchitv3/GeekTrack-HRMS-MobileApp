@@ -129,7 +129,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
-    marginBottom:40
+    marginBottom:40,
+    backgroundColor: "white",
+    borderRadius: 24,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginHorizontal: 10,
+    marginTop: 20,
+    padding: 20,
   },
   ProfilePic: {
     height: 200,
@@ -137,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   ProfileText: {
-    fontSize: 18,
+    fontSize: 16,
   },
   ProfileLabels: {
     fontWeight: "bold",
