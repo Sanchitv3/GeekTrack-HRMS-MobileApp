@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 40,
     height: 100,
+    backgroundColor:"white"
   },
   HeadView1: {
     flexDirection: "row",

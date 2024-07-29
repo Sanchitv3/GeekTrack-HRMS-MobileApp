@@ -15,7 +15,6 @@ import { observer } from "mobx-react-lite";
 import userStore from "./stores/userStore";
 
 WebBrowser.maybeCompleteAuthSession();
-
 const App = observer(() => {
   const [request, response, promptAsync] = Google.useAuthRequest({
     iosClientId:

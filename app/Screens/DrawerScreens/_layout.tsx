@@ -8,7 +8,7 @@ import { StatusBar } from "react-native";
 import React from "react";
 export default function Layout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 , backgroundColor:"white"}}>
       <StatusBar barStyle={'light-content'}/>
       <Drawer
         screenOptions={{

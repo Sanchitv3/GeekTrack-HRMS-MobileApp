@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    borderBottomRightRadius: 24,
-    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 44,
+    borderBottomLeftRadius: 44,
     flexDirection: "row",
     alignItems: "flex-end",
     paddingLeft: 20,

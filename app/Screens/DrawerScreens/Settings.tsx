@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   Main: {
     flex: 1,
     marginTop: 100,
-    paddingTop:20
+    paddingTop:20,
   },
   Profile: {
     flex: 0.5,
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
   },
   ProfileText: {
     fontSize: 16,
+    width:360,
   },
   ProfileLabels: {
     fontWeight: "bold",
@@ -157,6 +158,6 @@ const styles = StyleSheet.create({
     backgroundColor:"white",
     borderRadius: 24,
     padding: 20,
-    width:"100%"
+    width:"100%",
   },
 });
